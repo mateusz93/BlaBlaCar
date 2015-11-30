@@ -6,70 +6,72 @@ import java.util.Date;
  *
  */
 public class Trip {
+
     private User owner;
-    private Date start;
-    private String startingDay;
+    private Date startingDay;
+    private String startingPlace;
     private String destination;
     private double price;
     private int freeSeats;
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public void setStart(Date start) {
-        this.start = start;
-    }
-
-    public void setStartingDay(String startingDay) {
-        this.startingDay = startingDay;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setFreeSeats(int freeSeats) {
-        this.freeSeats = freeSeats;
-    }
-
-    public int getFreeSeats() {
-        return freeSeats;
-    }
 
     public User getOwner() {
         return owner;
     }
 
-    public Date getStart() {
-        return start;
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
-    public String getStartingDay() {
+    public Date getStartingDay() {
         return startingDay;
+    }
+
+    public void setStartingDay(Date startingDay) {
+        this.startingDay = startingDay;
+    }
+
+    public String getStartingPlace() {
+        return startingPlace;
+    }
+
+    public void setStartingPlace(String startingPlace) {
+        this.startingPlace = startingPlace;
     }
 
     public String getDestination() {
         return destination;
     }
 
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
     public double getPrice() {
         return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public int getFreeSeats() {
+        return freeSeats;
+    }
+
+    public void setFreeSeats(int freeSeats) {
+        this.freeSeats = freeSeats;
     }
 
     @Override
     public String toString() {
         return "Trip{" +
                 "owner=" + owner +
-                ", start=" + start +
-                ", startingDay='" + startingDay + '\'' +
+                ", startDay=" + startingDay +
+                ", startingPlace='" + startingPlace + '\'' +
                 ", destination='" + destination + '\'' +
                 ", price=" + price +
                 ", freeSeats=" + freeSeats +
                 '}';
     }
 }
+
