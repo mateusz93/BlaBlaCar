@@ -1,6 +1,3 @@
-package java;
-
-import java.User;
 import java.util.Date;
 
 /**

@@ -1,4 +1,3 @@
-package java;
 
 /**
  *
@@ -10,6 +9,15 @@ public class User {
     private String lastName;
     private String email;
     private String password;
+
+    public User(String firstName, String lastName, String email, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = email;
+    }
+
+    public User() {}
 
     public String getFirstName() {
         return firstName;

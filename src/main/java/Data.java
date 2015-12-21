@@ -1,6 +1,5 @@
-package java;
+import exception.NoFreeSeatsException;
 
-import java.exception.NoFreeSeatsException;
 import java.util.HashSet;
 import java.util.Set;
 
