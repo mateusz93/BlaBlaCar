@@ -37,7 +37,12 @@ public class ChatWebSocketHandler {
             }
             Chat.broadcastMessage(sender = Chat.userUsernameMap.get(user), msg = "Zarejestrowano pomyślnie");
         } else if (type.equals("login")) {
+            System.out.println(message.toString());
             Chat.login(obj);
+            Chat.broadcastMessage(sender = Chat.userUsernameMap.get(user), msg = "Zalogowano pomyślnie");
+        }  else if (type.equals("addTrip")) {
+            System.out.println(message.toString());
+            Chat.addTrip(obj);
             Chat.broadcastMessage(sender = Chat.userUsernameMap.get(user), msg = "Zalogowano pomyślnie");
         } else {
             throw new UnsupportedOperationException();

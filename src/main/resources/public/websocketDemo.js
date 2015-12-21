@@ -1,10 +1,29 @@
 //Establish the WebSocket connection and set up event handlers
-var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat/");
+var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/BlaBlaCar/");
 webSocket.onmessage = function (msg) { info(msg); };
 webSocket.onclose = function () { alert("WebSocket connection closed") };
 
+id("add").addEventListener("click", function () {
+    var msg = {
+            type: "addTrip",
+            startingPlace: document.getElementById("startingPlace").value,
+            destination: document.getElementById("destination").value,
+            startingDay: document.getElementById("startingDay").value,
+            price: document.getElementById("price").value,
+            freeSpace: document.getElementById("freeSeats").value,
+        };
+    // Send the msg object as a JSON-formatted string.
+    webSocket.send(JSON.stringify(msg));
 
-//Send message if "Send" is clicked
+    // Blank the text input element, ready to receive the next line of text from the user.
+    document.getElementById("startPlace").value = "";
+    document.getElementById("destination").value = "";
+    document.getElementById("time").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("freeSpace").value = "";
+}
+
+//Send message if "register" is clicked
 id("register").addEventListener("click", function () {
     var msg = {
         type: "registration",

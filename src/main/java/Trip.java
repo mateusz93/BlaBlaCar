@@ -8,7 +8,7 @@ import java.util.Date;
 public class Trip {
 
     private User owner;
-    private Date startingDay;
+    private String startingDay;
     private String startingPlace;
     private String destination;
     private double price;
@@ -22,11 +22,11 @@ public class Trip {
         this.owner = owner;
     }
 
-    public Date getStartingDay() {
+    public String getStartingDay() {
         return startingDay;
     }
 
-    public void setStartingDay(Date startingDay) {
+    public void setStartingDay(String startingDay) {
         this.startingDay = startingDay;
     }
 

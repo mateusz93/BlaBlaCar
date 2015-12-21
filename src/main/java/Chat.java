@@ -10,6 +10,7 @@ import static spark.Spark.*;
 
 public class Chat {
 
+    static List<Trip> trips = new ArrayList<>();
     static List<User> users = new ArrayList<User>();
     static Map<Session, String> userUsernameMap = new HashMap<>();
     static int nextUserNumber = 1; //Assign to username for next connecting user
@@ -22,15 +23,6 @@ public class Chat {
         users.add(new User("Mateusz", "Wieczorek", "mwieczorek@wp.pl", "mawieczo"));
         users.add(new User("Jakub", "Clapa", "jc@gmail.com", "jc"));
         init();
-    }
-
-    public static void register(JSONObject json) throws JSONException {
-        User u = new User();
-        u.setEmail(json.getString("email"));
-        u.setFirstName(json.getString("firstName"));
-        u.setLastName(json.getString("lastName"));
-        u.setPassword(json.getString("password"));
-        users.add(u);
     }
 
     //Sends a message from server to user
@@ -73,7 +65,28 @@ public class Chat {
         ).render();
     }
 
-    public static void login(JSONObject obj) {
+    public static void register(JSONObject json) throws JSONException {
+        User u = new User();
+        u.setEmail(json.getString("email"));
+        u.setFirstName(json.getString("firstName"));
+        u.setLastName(json.getString("lastName"));
+        u.setPassword(json.getString("password"));
+        users.add(u);
+    }
+
+
+    public static void login(JSONObject json) {
+
+    }
+
+    public static void addTrip(JSONObject json) throws JSONException {
+        Trip t = new Trip();
+        t.setFreeSeats(json.getInt("freeSeats"));
+        t.setDestination(json.getString("destination"));
+        t.setOwner(new User());
+        t.setPrice(json.getInt("price"));
+        t.setStartingDay(json.getString("startingDay"));
+        t.setStartingPlace(json.getString("startingPlace"));
 
     }
 }
