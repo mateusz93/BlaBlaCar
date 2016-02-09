@@ -1,3 +1,5 @@
+import org.eclipse.jetty.websocket.api.Session;
+
 import java.util.Date;
 
 /**
@@ -8,11 +10,12 @@ import java.util.Date;
 public class Trip {
 
     private User owner;
-    private String startingDay;
+    private Date startingDay;
     private String startingPlace;
     private String destination;
     private double price;
     private int freeSeats;
+    private Session user;
 
     public User getOwner() {
         return owner;
@@ -22,11 +25,11 @@ public class Trip {
         this.owner = owner;
     }
 
-    public String getStartingDay() {
+    public Date getStartingDay() {
         return startingDay;
     }
 
-    public void setStartingDay(String startingDay) {
+    public void setStartingDay(Date startingDay) {
         this.startingDay = startingDay;
     }
 
@@ -60,6 +63,14 @@ public class Trip {
 
     public void setFreeSeats(int freeSeats) {
         this.freeSeats = freeSeats;
+    }
+
+    public Session getUser() {
+        return user;
+    }
+
+    public void setUser(Session user) {
+        this.user = user;
     }
 
     @Override

@@ -1,3 +1,4 @@
+import org.eclipse.jetty.websocket.api.Session;
 
 /**
  *
@@ -9,15 +10,8 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-
-    public User(String firstName, String lastName, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = email;
-    }
-
-    public User() {}
+    private Session user;
+    private boolean connected;
 
     public String getFirstName() {
         return firstName;
@@ -51,14 +45,31 @@ public class User {
         this.password = password;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void setConnected(boolean a) {
+        this.connected = a;
+    }
+
+    public Session getUser() {
+        return user;
+    }
+
+    public void setUser(Session user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
-        return "java.User{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+//        return "java.User{" +
+//                "firstName='" + firstName + '\'' +
+//                ", lastName='" + lastName + '\'' +
+//                ", email='" + email + '\'' +
+//                ", password='" + password + '\'' +
+//                '}';
+        return firstName + " " + lastName;
     }
 
     @Override

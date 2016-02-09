@@ -1,62 +1,7 @@
 //Establish the WebSocket connection and set up event handlers
-var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/BlaBlaCar/");
-webSocket.onmessage = function (msg) { info(msg); };
+var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat/");
+webSocket.onmessage = function (msg) { updateChat(msg); };
 webSocket.onclose = function () { alert("WebSocket connection closed") };
-
-id("add").addEventListener("click", function () {
-    var msg = {
-            type: "addTrip",
-            startingPlace: document.getElementById("startingPlace").value,
-            destination: document.getElementById("destination").value,
-            startingDay: document.getElementById("startingDay").value,
-            price: document.getElementById("price").value,
-            freeSpace: document.getElementById("freeSeats").value,
-        };
-    // Send the msg object as a JSON-formatted string.
-    webSocket.send(JSON.stringify(msg));
-
-    // Blank the text input element, ready to receive the next line of text from the user.
-    document.getElementById("startPlace").value = "";
-    document.getElementById("destination").value = "";
-    document.getElementById("time").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("freeSpace").value = "";
-}
-
-//Send message if "register" is clicked
-id("register").addEventListener("click", function () {
-    var msg = {
-        type: "registration",
-        firstName: document.getElementById("firstName").value,
-        lastName: document.getElementById("lastName").value,
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value
-    };
-
-    // Send the msg object as a JSON-formatted string.
-    webSocket.send(JSON.stringify(msg));
-
-    // Blank the text input element, ready to receive the next line of text from the user.
-    document.getElementById("firstName").value = "";
-    document.getElementById("lastName").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
-});
-
-id("login").addEventListener("click", function () {
-    var msg = {
-            type: "login",
-            email: document.getElementById("email").value,
-            password: document.getElementById("password").value
-        };
-
-    // Send the msg object as a JSON-formatted string.
-    webSocket.send(JSON.stringify(msg));
-
-    // Blank the text input element, ready to receive the next line of text from the user.
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
-}
 
 //Send message if "Send" is clicked
 id("send").addEventListener("click", function () {
@@ -77,15 +22,9 @@ function sendMessage(message) {
 }
 
 //Update the chat-panel, and the list of connected users
-function info(msg) {
-    var data = JSON.parse(msg.data);
-    id("registerInfo").innerHTML = data;
-}
-
-//Update the chat-panel, and the list of connected users
 function updateChat(msg) {
     var data = JSON.parse(msg.data);
-    insert("BlaBlaCar", data.userMessage);
+    insert("chat", data.userMessage);
     id("userlist").innerHTML = "";
     data.userlist.forEach(function (user) {
         insert("userlist", "<li>" + user + "</li>");
@@ -101,3 +40,55 @@ function insert(targetId, message) {
 function id(id) {
     return document.getElementById(id);
 }
+
+function showAddTripForm() {
+    return document.getElementById("addTrip").style.visibility = 'visible';
+}
+
+function showSubscribeTripForm() {
+    return document.getElementById("subscribeTrip").style.visibility = 'visible';
+}
+
+function showSaveTripForm() {
+    return document.getElementById("saveTripButton");
+}
+
+id("addTripSend").addEventListener("click", function () {
+    var msg = {
+        type: "addTrip",
+        startingPlace: document.getElementById("startingPlace").value,
+        destination: document.getElementById("destination").value,
+        startingDay: document.getElementById("startingDay").value,
+        price: document.getElementById("price").value,
+        freeSeats: document.getElementById("freeSeats").value
+    };
+
+    // Send the msg object as a JSON-formatted string.
+    webSocket.send(JSON.stringify(msg));
+
+    // Blank the text input element, ready to receive the next line of text from the user.
+    document.getElementById("startingPlace").value = "";
+    document.getElementById("destination").value = "";
+    document.getElementById("startingDay").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("freeSeats").value = "";
+
+    document.getElementById("addTrip").style.visibility = 'hidden';
+});
+
+id("subscribeTripSend").addEventListener("click", function () {
+    var msg = {
+        type: "subscribeTrip",
+        subscribeStartingPlace: document.getElementById("subscribeStartingPlace").value,
+        subscribeDestination: document.getElementById("subscribeDestination").value
+    };
+
+    // Send the msg object as a JSON-formatted string.
+    webSocket.send(JSON.stringify(msg));
+
+    // Blank the text input element, ready to receive the next line of text from the user.
+    document.getElementById("subscribeDestination").value = "";
+    document.getElementById("subscribeDestination").value = "";
+
+    document.getElementById("subscribeTrip").style.visibility = 'hidden';
+});

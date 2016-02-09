@@ -1,32 +1,43 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/html">
+<html>
 <head>
-    <title>WebsSockets</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="utf-8">
+    <title>WebsSockets</title>
     <link rel="stylesheet" href="style.css">
-    <!--  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 </head>
+<div style="width: 100%;">
+    <div style="float:left; width: 80%">
+    </div>
+    <div style="float:right;">
+    </div>
+</div>
 <body>
 <img src="http://i76.fastpic.ru/big/2015/1220/20/754de54bf7195207e018717a695eff20.png" alt="BlaBlaCar">
 </br>
-<button type="button" onclick="location.href = '/login.html';">Logowanie</button>
-<button type="button" onclick="location.href = '/register.html';">Rejestracja</button>
-</br></br>
+<button type="button" onclick="showAddTripForm()">Dodaj przejazd</button>
+<button type="button" onclick="showSubscribeTripForm()">Subskrybuj przejazd</button>
 
-<button type="button" onclick="location.href = '/add.html';">Dodaj przejazd</button>
-<button type="button" onclick="location.href = '/subscribe.html';">Zasubskrybuj przejazd</button>
-<button type="button" onclick="location.href = '/save.html';">Zapisz sie na przejazd</button>
-</br></br>
+<div id="addTrip" style="visibility: hidden">
+    <input id="startingPlace" name="startPlace" type="text" placeholder="Skad">
+    <input id="destination" name="destination" type="text" placeholder="Dokad"><br>
+    <input id="startingDay" name="startingDay" type="text" placeholder="DD:MM:YYYY"><br>
+    <input id="price" name="price" type="text" placeholder="Cena"><br>
+    <input id="freeSeats" name="freeSpace" type="text" placeholder="Wolne miejsca"><br>
+    <button id="addTripSend">Zapisz</button>
+</div>
 
-<!--<div id="chatControls">-->
-    <!--<input id="message" placeholder="Type your message">-->
-    <!--<button id="send">Send</button>-->
-<!--</div>-->
-<!--<ul id="userlist"> &lt;!&ndash; Built by JS &ndash;&gt; </ul>-->
-<!--<div id="chat">    &lt;!&ndash; Built by JS &ndash;&gt; </div>-->
+<div id="subscribeTrip" style="visibility: hidden">
+    <input id="subscribeStartingPlace" name="subscribeStartPlace" type="text" placeholder="Skad">
+    <input id="subscribeDestination" name="subscribeDestination" type="text" placeholder="Dokad"><br>
+    <button id="subscribeTripSend">Zapisz</button>
+</div>
+
+<div id="chatControls" style="visibility: hidden">
+    <input id="message" placeholder="Type your message">
+    <button id="send">Send</button>
+</div>
+<ul id="userlist"> <!-- Built by JS --> </ul>
+<div id="chat">    <!-- Built by JS --> </div>
 <script src="websocketDemo.js"></script>
 </body>
 </html>
