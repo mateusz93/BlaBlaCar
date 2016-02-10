@@ -16,6 +16,8 @@
 </br>
 <button type="button" onclick="showAddTripForm()">Dodaj przejazd</button>
 <button type="button" onclick="showSubscribeTripForm()">Subskrybuj przejazd</button>
+<br><br>
+<button type="button" onclick="showSaveTripForm()">Zapisz sie na przejazd</button>
 
 <div id="addTrip" style="visibility: hidden">
     <input id="startingPlace" name="startPlace" type="text" placeholder="Skad">
@@ -31,13 +33,11 @@
     <input id="subscribeDestination" name="subscribeDestination" type="text" placeholder="Dokad"><br>
     <button id="subscribeTripSend">Zapisz</button>
 </div>
-
-<div id="chatControls" style="visibility: hidden">
-    <input id="message" placeholder="Type your message">
-    <button id="send">Send</button>
-</div>
-<ul id="userlist"> <!-- Built by JS --> </ul>
-<div id="chat">    <!-- Built by JS --> </div>
+<br><br>
+<ul id="tripList" style="visibility: hidden">></ul>
+<ul id="userlist"></ul>
+<div id="chat"></div>
 <script src="websocketDemo.js"></script>
+
 </body>
 </html>

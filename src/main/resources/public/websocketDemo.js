@@ -1,34 +1,27 @@
 //Establish the WebSocket connection and set up event handlers
 var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat/");
-webSocket.onmessage = function (msg) { updateChat(msg); };
+webSocket.onmessage = function (msg) { updateChatAndLists(msg); };
 webSocket.onclose = function () { alert("WebSocket connection closed") };
 
-//Send message if "Send" is clicked
-id("send").addEventListener("click", function () {
-    sendMessage(id("message").value);
-});
 
-//Send message if enter is pressed in the input field
-id("message").addEventListener("keypress", function (e) {
-    if (e.keyCode === 13) { sendMessage(e.target.value); }
-});
-
-//Send a message if it's not empty, then clear the input field
-function sendMessage(message) {
-    if (message !== "") {
-        webSocket.send(message);
-        id("message").value = "";
-    }
-}
-
-//Update the chat-panel, and the list of connected users
-function updateChat(msg) {
+//Update the chat-panel, the list of connected users and trips
+function updateChatAndLists(msg) {
     var data = JSON.parse(msg.data);
-    insert("chat", data.userMessage);
+    if (data.userMessage != null) {
+        insert("chat", data.userMessage);
+    }
     id("userlist").innerHTML = "";
     data.userlist.forEach(function (user) {
         insert("userlist", "<li>" + user + "</li>");
     });
+    id("tripList").innerHTML = "";
+    var number = 0;
+    data.tripList.forEach(function (trip) {
+        insert("tripList", "<li>" + trip +
+            "<br><button id=\"addTripSend" + number + "\"" + ">Zapisz sie</button>" +
+            "</li><br><br>");
+        number = number + 1;
+    })
 }
 
 //Helper function for inserting HTML as the first child of an element
@@ -42,53 +35,57 @@ function id(id) {
 }
 
 function showAddTripForm() {
-    return document.getElementById("addTrip").style.visibility = 'visible';
+    return id("addTrip").style.visibility = 'visible';
 }
 
 function showSubscribeTripForm() {
-    return document.getElementById("subscribeTrip").style.visibility = 'visible';
+    return id("subscribeTrip").style.visibility = 'visible';
 }
 
 function showSaveTripForm() {
-    return document.getElementById("saveTripButton");
+    return id("tripList").style.visibility = 'visible';
 }
 
 id("addTripSend").addEventListener("click", function () {
     var msg = {
         type: "addTrip",
-        startingPlace: document.getElementById("startingPlace").value,
-        destination: document.getElementById("destination").value,
-        startingDay: document.getElementById("startingDay").value,
-        price: document.getElementById("price").value,
-        freeSeats: document.getElementById("freeSeats").value
+        startingPlace: id("startingPlace").value,
+        destination: id("destination").value,
+        startingDay: id("startingDay").value,
+        price: id("price").value,
+        freeSeats: id("freeSeats").value
     };
 
     // Send the msg object as a JSON-formatted string.
     webSocket.send(JSON.stringify(msg));
 
     // Blank the text input element, ready to receive the next line of text from the user.
-    document.getElementById("startingPlace").value = "";
-    document.getElementById("destination").value = "";
-    document.getElementById("startingDay").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("freeSeats").value = "";
+    id("startingPlace").value = "";
+    id("destination").value = "";
+    id("startingDay").value = "";
+    id("price").value = "";
+    id("freeSeats").value = "";
 
-    document.getElementById("addTrip").style.visibility = 'hidden';
+    id("addTrip").style.visibility = 'hidden';
 });
 
 id("subscribeTripSend").addEventListener("click", function () {
     var msg = {
         type: "subscribeTrip",
-        subscribeStartingPlace: document.getElementById("subscribeStartingPlace").value,
-        subscribeDestination: document.getElementById("subscribeDestination").value
+        subscribeStartingPlace: id("subscribeStartingPlace").value,
+        subscribeDestination: id("subscribeDestination").value
     };
 
     // Send the msg object as a JSON-formatted string.
     webSocket.send(JSON.stringify(msg));
 
     // Blank the text input element, ready to receive the next line of text from the user.
-    document.getElementById("subscribeDestination").value = "";
-    document.getElementById("subscribeDestination").value = "";
+    id("subscribeDestination").value = "";
+    id("subscribeDestination").value = "";
 
-    document.getElementById("subscribeTrip").style.visibility = 'hidden';
+    id("subscribeTrip").style.visibility = 'hidden';
+});
+
+id("tripList").addEventListener("click", function () {
+    id("tripList").style.visibility = 'visible';
 });

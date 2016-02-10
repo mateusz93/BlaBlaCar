@@ -75,13 +75,11 @@ public class Trip {
 
     @Override
     public String toString() {
-        return "java.Trip{" +
-                "owner=" + owner +
-                ", startDay=" + startingDay +
-                ", startingPlace='" + startingPlace + '\'' +
-                ", destination='" + destination + '\'' +
-                ", price=" + price +
-                ", freeSeats=" + freeSeats +
-                '}';
+        return "Kierowca: " + owner + '\'' +
+                ", Dzień startu: " + startingDay + '\'' +
+                ", Miejsca startu: " + startingPlace + '\'' +
+                ", Miejsce docelowe: " + destination + '\'' +
+                ", Cena: " + price + '\'' +
+                ", Wolne miejsca: " + freeSeats;
     }
 }

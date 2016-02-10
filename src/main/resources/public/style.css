@@ -28,11 +28,6 @@ li {
     margin: 5px 0;
 }
 
-#chatControls {
-    overflow: auto;
-    margin: 0 0 5px 0
-}
-
 #userlist {
     position: fixed;
     left: 50%;
@@ -64,6 +59,18 @@ li {
     background: #f0f0f9;
     padding: 5px 10px;
     width: 200px;
+    top: 11px;
+}
+
+#tripList {
+    position: fixed;
+    right: 50%;
+    list-style: none;
+    margin-right: 250px;
+    margin-top: 370px;
+    background: #f0f0f9;
+    padding: 5px 10px;
+    width: 300px;
     top: 11px;
 }
 

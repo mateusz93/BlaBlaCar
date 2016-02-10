@@ -25,6 +25,27 @@ public class Chat {
         webSocket("/chat", ChatWebSocketHandler.class);
         init();
         initUsers();
+        initTrips();
+    }
+
+    private static void initTrips() {
+        Trip trip = new Trip();
+        trip.setStartingDay(new Date());
+        trip.setPrice(23);
+        trip.setStartingPlace("a");
+        trip.setDestination("b");
+        trip.setOwner(users.get(0));
+        trip.setFreeSeats(2);
+        trips.add(trip);
+
+        Trip trip2 = new Trip();
+        trip2.setStartingDay(new Date());
+        trip2.setPrice(111);
+        trip2.setStartingPlace("ABC");
+        trip2.setDestination("ZYX");
+        trip2.setOwner(users.get(1));
+        trip2.setFreeSeats(3);
+        trips.add(trip2);
     }
 
     private static void initUsers() {
@@ -54,6 +75,7 @@ public class Chat {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                                 .put("userMessage", createHtmlMessageFromSender(sender, message))
                                 .put("userlist", userUsernameMap.values())
+                                .put("tripList", trips)
                 ));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -96,34 +118,46 @@ public class Chat {
                     s.getDestination().equals(obj.getString("destination"))) {
 
                 Session user = s.getOwner().getUserSession();
-//                for (Trip t : trips) {
-//                    if (obj.getString("startingPlace").equals(t.getStartingPlace()) &&
-//                            obj.getString("destination").equals(t.getDestination())) {
-//                        user = t.getUser();
-//                    }
-//                }
-
-                final Session finalUser = user;
-                userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-                    if (session == finalUser) {
-                        try {
-                            String message = ">>> Dodał przejazd który subskrybujesz <<< ";
-                            message += "[Miejsce startu: " + obj.getString("startingPlace") + "]\n";
-                            message += "[Miejsce docelowe: " + obj.getString("destination") + "]\n";
-                            message += "[Wolne miejsca: " + obj.getString("freeSeats") + "]\n";
-                            message += "[Cena: " + obj.getString("price") + "]\n";
-
-                            session.getRemote().sendString(String.valueOf(new JSONObject()
-                                            .put("userMessage", createHtmlMessageFromSender(trips.get(trips.size() - 1).getOwner().toString(), message))
-                                            .put("userlist", userUsernameMap.values())
-                            ));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                sendSubscriptionMessageToSubscribers(user, obj);
             }
         }
+        updateAllLists();
+    }
 
+    private static void sendSubscriptionMessageToSubscribers(final Session subscriber, JSONObject obj) {
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            if (session == subscriber) {
+                try {
+                    String message = ">>> Dodał przejazd który subskrybujesz <<< ";
+                    message += "[Miejsce startu: " + obj.getString("startingPlace") + "]\n";
+                    message += "[Miejsce docelowe: " + obj.getString("destination") + "]\n";
+                    message += "[Wolne miejsca: " + obj.getString("freeSeats") + "]\n";
+                    message += "[Cena: " + obj.getString("price") + "]\n";
+
+                    session.getRemote().sendString(String.valueOf(new JSONObject()
+                                    .put("userMessage", createHtmlMessageFromSender(trips.get(trips.size() - 1).getOwner().toString(), message))
+                                    .put("userlist", userUsernameMap.values())
+                                    .put("tripList", trips)
+                    ));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private static void updateAllLists() {
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                                .put("userlist", userUsernameMap.values())
+                                .put("tripList", trips)
+                ));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
