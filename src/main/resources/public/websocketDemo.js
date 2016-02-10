@@ -1,6 +1,6 @@
 //Establish the WebSocket connection and set up event handlers
 var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat/");
-webSocket.onmessage = function (msg) { updateChatAndLists(msg); };
+webSocket.onmessage = function (msg) { updateChatAndLists(msg); activeSaveForTrip();};
 webSocket.onclose = function () { alert("WebSocket connection closed") };
 
 
@@ -18,10 +18,11 @@ function updateChatAndLists(msg) {
     var number = 0;
     data.tripList.forEach(function (trip) {
         insert("tripList", "<li>" + trip +
-            "<br><button id=\"addTripSend" + number + "\"" + ">Zapisz sie</button>" +
+            "<br><button name=\"trip\" value=\"" + number + "\" >Zapisz sie</button>" +
             "</li><br><br>");
         number = number + 1;
     })
+
 }
 
 //Helper function for inserting HTML as the first child of an element
@@ -42,7 +43,8 @@ function showSubscribeTripForm() {
     return id("subscribeTrip").style.visibility = 'visible';
 }
 
-function showSaveTripForm() {
+function showSaveTripFormAndActivateSaving() {
+    activeSaveForTrip();
     return id("tripList").style.visibility = 'visible';
 }
 
@@ -89,3 +91,25 @@ id("subscribeTripSend").addEventListener("click", function () {
 id("tripList").addEventListener("click", function () {
     id("tripList").style.visibility = 'visible';
 });
+
+function activeSaveForTrip() {
+    var trips = document.getElementsByName("trip");
+
+    for(var i = 0; i < trips.length; i++) {
+        trips[i].onclick = function() {
+            saveMeForTrip(this.value);
+        }
+    }
+}
+
+function saveMeForTrip(number) {
+    var msg = {
+        type: "saveForTrip",
+        tripNumber: number
+    };
+
+    // Send the msg object as a JSON-formatted string.
+    webSocket.send(JSON.stringify(msg));
+
+    id("tripList").style.visibility = 'hidden';
+}

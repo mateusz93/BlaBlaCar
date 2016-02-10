@@ -40,14 +40,14 @@ public class ChatWebSocketHandler {
             for (User s : Chat.users) {
                 System.out.println(s.getFirstName() + " " + s.getLastName() + " " + s.getEmail() + " " + s.getPassword());
             }
-            //Chat.broadcastMessage(sender = user1.getFirstName() + " " + user1.getLastName(), msg = "Dodano przejazd");
             Chat.checkSubscriptionForTripAndSendMessage(obj);
         }
         if ("subscribeTrip".equals(type)) {
             Chat.subscribeTrip(obj, user1);
-            //Chat.broadcastMessage(sender = user1.getFirstName() + " " + user1.getLastName(), msg = "Zasubskryptowano przejazd");
         }
-
+        if ("saveForTrip".equals(type)) {
+            Chat.saveMeForATrip(obj, user1);
+        }
     }
 
 }

@@ -1,6 +1,8 @@
 import org.eclipse.jetty.websocket.api.Session;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -16,6 +18,11 @@ public class Trip {
     private double price;
     private int freeSeats;
     private Session user;
+    private List<User> users;
+
+    public Trip() {
+        users = new ArrayList<User>();
+    }
 
     public User getOwner() {
         return owner;
@@ -73,13 +80,21 @@ public class Trip {
         this.user = user;
     }
 
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
     @Override
     public String toString() {
-        return "Kierowca: " + owner + '\'' +
-                ", Dzień startu: " + startingDay + '\'' +
-                ", Miejsca startu: " + startingPlace + '\'' +
-                ", Miejsce docelowe: " + destination + '\'' +
-                ", Cena: " + price + '\'' +
+        return "Kierowca: " + owner +
+                ", Dzień startu: " + startingDay +
+                ", Miejsca startu: " + startingPlace +
+                ", Miejsce docelowe: " + destination +
+                ", Cena: " + price +
                 ", Wolne miejsca: " + freeSeats;
     }
 }

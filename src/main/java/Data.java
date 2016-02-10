@@ -9,15 +9,15 @@ import java.util.Set;
  *
  */
 public class Data {
-    Set<Trip> trips;
-    Set<Trip> subscribes;
+    static Set<Trip> trips;
+    static Set<Trip> subscribes;
 
     public Data() {
         trips = new HashSet<Trip>();
         subscribes = new HashSet<Trip>();
     }
 
-    public Trip addTrip(Trip trip) {
+    public static Trip addTrip(Trip trip) {
         for (Trip s : subscribes) {
             if (s.getStartingPlace().equalsIgnoreCase(trip.getStartingPlace()) &&
                     s.getDestination().equalsIgnoreCase(trip.getDestination())) {
@@ -33,7 +33,7 @@ public class Data {
         return trips.remove(trip);
     }
 
-    public Boolean subscribe(String startingPlace, String destination, User subscriber) {
+    public static Boolean subscribe(String startingPlace, String destination, User subscriber) {
         Trip trip = new Trip();
         trip.setStartingPlace(startingPlace);
         trip.setDestination(destination);
@@ -48,7 +48,7 @@ public class Data {
         return false;
     }
 
-    public Boolean cancelSubscribe(String startingPlace, String destination, User subscriber) {
+    public static Boolean cancelSubscribe(String startingPlace, String destination, User subscriber) {
         for (Trip t : trips) {
             if (t.getStartingPlace().equalsIgnoreCase(startingPlace) &&
                     t.getDestination().equalsIgnoreCase(destination) &&
@@ -60,7 +60,7 @@ public class Data {
         return false;
     }
 
-    public Boolean reserveSeat(Trip trip) throws NoFreeSeatsException {
+    public static Boolean reserveSeat(Trip trip) throws NoFreeSeatsException {
         for (Trip t : trips) {
             if (t.equals(trip) || t == trip) {
                 if (t.getFreeSeats() > 0) {

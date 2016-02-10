@@ -31,21 +31,21 @@ public class Chat {
     private static void initTrips() {
         Trip trip = new Trip();
         trip.setStartingDay(new Date());
-        trip.setPrice(23);
-        trip.setStartingPlace("a");
-        trip.setDestination("b");
+        trip.setPrice(15);
+        trip.setStartingPlace("Wrocław");
+        trip.setDestination("Gdańsk");
         trip.setOwner(users.get(0));
-        trip.setFreeSeats(2);
+        trip.setFreeSeats(4);
         trips.add(trip);
 
-        Trip trip2 = new Trip();
-        trip2.setStartingDay(new Date());
-        trip2.setPrice(111);
-        trip2.setStartingPlace("ABC");
-        trip2.setDestination("ZYX");
-        trip2.setOwner(users.get(1));
-        trip2.setFreeSeats(3);
-        trips.add(trip2);
+//        Trip trip2 = new Trip();
+//        trip2.setStartingDay(new Date());
+//        trip2.setPrice(111);
+//        trip2.setStartingPlace("ABC");
+//        trip2.setDestination("ZYX");
+//        trip2.setOwner(users.get(1));
+//        trip2.setFreeSeats(3);
+//        trips.add(trip2);
     }
 
     private static void initUsers() {
@@ -111,6 +111,48 @@ public class Chat {
         subscribedTrips.add(trip);
     }
 
+    public static void saveMeForATrip(JSONObject json, User user) throws JSONException {
+        int tripNumber = Integer.parseInt(json.getString("tripNumber"));
+        System.out.println("Numer przejazdu: " + tripNumber);
+        trips.get(tripNumber).getUsers().add(user);
+        trips.get(tripNumber).setFreeSeats(trips.get(tripNumber).getFreeSeats() - 1);
+        sendNotificationToAllTripParticipants(trips.get(tripNumber).getStartingPlace(), trips.get(tripNumber).getDestination(), user);
+        updateAllLists();
+    }
+
+    private static void sendNotificationToAllTripParticipants(String startingPlace, String destination, User u) {
+        for (Trip s : trips) {
+            if (s.getStartingPlace().equals(startingPlace) &&
+                    s.getDestination().equals(destination)) {
+                final List<User> finalUsersToNotificate = s.getUsers();
+                System.out.println(finalUsersToNotificate.toString());
+                userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+                    for (User user : finalUsersToNotificate) {
+                        if (session == user.getUserSession()) {
+                            try {
+                                String message = "";
+                                if (session == u.getUserSession()) {
+                                    message = "Zapisałem się na przejazd";
+                                } else {
+                                    message = "Dołączył do przejazdu w którym bierzesz udział";
+                                }
+                                message += "[Miejsce startu: " + startingPlace + "]\n";
+                                message += "[Miejsce docelowe: " + destination + "]\n";
+
+                                session.getRemote().sendString(String.valueOf(new JSONObject()
+                                                .put("userMessage", createHtmlMessageFromSender(u.getFirstName() + " " + u.getLastName(), message))
+                                                .put("userlist", userUsernameMap.values())
+                                                .put("tripList", trips)
+                                ));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
 
     public static void checkSubscriptionForTripAndSendMessage(JSONObject obj) throws JSONException {
         for (Trip s : subscribedTrips) {
@@ -160,4 +202,6 @@ public class Chat {
             }
         });
     }
+
+
 }
