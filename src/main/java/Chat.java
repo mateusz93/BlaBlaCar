@@ -104,6 +104,7 @@ public class Chat {
         trip.setFreeSeats(json.getInt("freeSeats"));
         trip.setPrice(json.getDouble("price"));
         // trip.setStartingDay(json.getString("startingDay"));
+        trip.getUsers().add(user);
         trips.add(trip);
     }
 
@@ -118,6 +119,11 @@ public class Chat {
     public static void saveMeForATrip(JSONObject json, User user) throws JSONException {
         int tripNumber = Integer.parseInt(json.getString("tripNumber"));
         System.out.println("Numer przejazdu: " + tripNumber);
+        for (User u : trips.get(tripNumber).getUsers()) {
+            if (u.getEmail().equals(user.getEmail())) {
+                return;
+            }
+        }
         trips.get(tripNumber).getUsers().add(user);
         trips.get(tripNumber).setFreeSeats(trips.get(tripNumber).getFreeSeats() - 1);
         sendNotificationToAllTripParticipants(trips.get(tripNumber).getStartingPlace(), trips.get(tripNumber).getDestination(), user);
