@@ -131,6 +131,8 @@ public class Chat {
                 final List<User> finalUsersToNotificate = s.getUsers();
                 System.out.println(finalUsersToNotificate.toString());
                 userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+                    ArrayList<User> me = new ArrayList<User>();
+                    me.add(userUsernameMap.get(session));
                     for (User user : finalUsersToNotificate) {
                         if (session == user.getUserSession()) {
                             try {
@@ -147,7 +149,7 @@ public class Chat {
                                                 .put("userMessage", createHtmlMessageFromSender(u.getFirstName() + " " + u.getLastName(), message))
                                                 .put("userlist", userUsernameMap.values())
                                                 .put("tripList", trips)
-                                                .put("me", userUsernameMap.get(session))
+                                                .put("me", me)
                                 ));
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -173,6 +175,8 @@ public class Chat {
 
     private static void sendSubscriptionMessageToSubscribers(final Session subscriber, JSONObject obj) {
         userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            ArrayList<User> me = new ArrayList<User>();
+            me.add(userUsernameMap.get(session));
             if (session == subscriber) {
                 try {
                     String message = ">>> Dodał przejazd który subskrybujesz <<< ";
@@ -185,7 +189,7 @@ public class Chat {
                                     .put("userMessage", createHtmlMessageFromSender(trips.get(trips.size() - 1).getOwner().toString(), message))
                                     .put("userlist", userUsernameMap.values())
                                     .put("tripList", trips)
-                                    .put("me", userUsernameMap.get(session))
+                                    .put("me", me)
                     ));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -196,11 +200,13 @@ public class Chat {
 
     private static void updateAllLists() {
         userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            ArrayList<User> me = new ArrayList<User>();
+            me.add(userUsernameMap.get(session));
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                                 .put("userlist", userUsernameMap.values())
                                 .put("tripList", trips)
-                                .put("me", userUsernameMap.get(session))
+                                .put("me", me)
                 ));
             } catch (IOException e) {
                 e.printStackTrace();
