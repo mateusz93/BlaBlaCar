@@ -10,8 +10,7 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-    private Session user;
-    private boolean connected;
+    private Session userSession;
 
     public String getFirstName() {
         return firstName;
@@ -45,20 +44,12 @@ public class User {
         this.password = password;
     }
 
-    public boolean isConnected() {
-        return connected;
+    public Session getUserSession() {
+        return userSession;
     }
 
-    public void setConnected(boolean a) {
-        this.connected = a;
-    }
-
-    public Session getUser() {
-        return user;
-    }
-
-    public void setUser(Session user) {
-        this.user = user;
+    public void setUserSession(Session userSession) {
+        this.userSession = userSession;
     }
 
     @Override

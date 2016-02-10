@@ -13,8 +13,7 @@ public class ChatWebSocketHandler {
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
         User user1 = Chat.users.get(Chat.nextUserNumber);
-        Chat.users.get(Chat.nextUserNumber).setConnected(true);
-        Chat.users.get(Chat.nextUserNumber).setUser(user);
+        Chat.users.get(Chat.nextUserNumber).setUserSession(user);
 //        String username = "" + users.get(Chat.nextUserNumber).getFirstName() + " " + users.get(Chat.nextUserNumber).getLastName();
         Chat.userUsernameMap.put(user, Chat.users.get(Chat.nextUserNumber));
         Chat.broadcastMessage(sender = user1.getFirstName() + " " + user1.getLastName(), msg = "podłączył sie");

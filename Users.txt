@@ -1,0 +1,10 @@
+Mateusz;Wieczorek;mateusz.wieczorek@gmail.com;password
+Jan;Kowalski;jan.kowalski@gmail.com;password
+Ewa;Nowak;ewa.nowak@gmail.com;password
+Jakub;Clapa;j.clapa@gmail.com;password
+Eugeniusz;Pisula;e.pisula@gmail.com;password
+Marek;Zdun;marek.zdun@gmail.com;password
+Marian;Pazdzioch;mar.pazdz@gmail.com;password
+Irena;Zadka;i.zadka@gmail.com;password
+Zuzanna;Duleba;z.duleba@gmail.com;password
+Emilia;Olszewska;emilia.o@gmail.com;password

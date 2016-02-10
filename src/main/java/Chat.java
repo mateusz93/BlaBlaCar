@@ -1,7 +1,14 @@
 import org.eclipse.jetty.websocket.api.*;
 import org.json.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static j2html.TagCreator.*;
 import static spark.Spark.*;
 
@@ -21,30 +28,23 @@ public class Chat {
     }
 
     private static void initUsers() {
-        User user = new User();
-        user.setFirstName("Mateusz");
-        user.setLastName("Wieczorek");
-        user.setPassword("password");
-        user.setEmail("mateusz.wieczorek@gmail.com");
-        User user2 = new User();
-        user2.setFirstName("Kuba");
-        user2.setLastName("Clapa");
-        user2.setPassword("password");
-        user2.setEmail("kuba.clapa@gmail.com");
-        User user3 = new User();
-        user3.setFirstName("Ewa");
-        user3.setLastName("Nowak");
-        user3.setPassword("password");
-        user3.setEmail("ewa.nowak@gmail.com");
-        User user4 = new User();
-        user4.setFirstName("Jan");
-        user4.setLastName("Kowalski");
-        user4.setPassword("password");
-        user4.setEmail("jan.kowalski@gmail.com");
-        users.add(user);
-        users.add(user3);
-        users.add(user2);
-        users.add(user4);
+        List<String> userList = new ArrayList<>();
+
+        try (Stream<String> stream = Files.lines(Paths.get("Users.txt"))) {
+            userList = stream.collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (String s : userList) {
+            String[] userTable = s.split(";");
+            User user = new User();
+            user.setFirstName(userTable[0]);
+            user.setLastName(userTable[1]);
+            user.setEmail(userTable[2]);
+            user.setPassword(userTable[3]);
+            users.add(user);
+        }
     }
 
     //Sends a message from one user to all users, along with a list of current usernames
@@ -95,7 +95,7 @@ public class Chat {
             if (s.getStartingPlace().equals(obj.getString("startingPlace")) &&
                     s.getDestination().equals(obj.getString("destination"))) {
 
-                Session user = s.getOwner().getUser();
+                Session user = s.getOwner().getUserSession();
 //                for (Trip t : trips) {
 //                    if (obj.getString("startingPlace").equals(t.getStartingPlace()) &&
 //                            obj.getString("destination").equals(t.getDestination())) {
