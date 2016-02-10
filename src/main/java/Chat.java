@@ -134,7 +134,7 @@ public class Chat {
                     ArrayList<User> me = new ArrayList<User>();
                     me.add(userUsernameMap.get(session));
                     for (User user : finalUsersToNotificate) {
-                        if (session == user.getUserSession()) {
+                        if (session == user.getUserSession() || session == s.getOwner().getUserSession()) {
                             try {
                                 String message = "";
                                 if (session == u.getUserSession()) {
