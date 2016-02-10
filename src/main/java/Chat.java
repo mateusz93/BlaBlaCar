@@ -148,9 +148,13 @@ public class Chat {
                                 } else {
                                     message = "Dołączył do przejazdu w którym bierzesz udział";
                                 }
-                                message += "[Miejsce startu: " + startingPlace + "]\n";
+                                message += " [Miejsce startu: " + startingPlace + "]\n";
                                 message += "[Miejsce docelowe: " + destination + "]\n";
-
+                                message += "[Lista uczestników: ";
+                                for (User us : findTripByStartingPlaceAndDestination(startingPlace, destination).getUsers()) {
+                                    message += us.getFirstName() + " " + us.getLastName() + ", ";
+                                }
+                                message += "]";
                                 session.getRemote().sendString(String.valueOf(new JSONObject()
                                                 .put("userMessage", createHtmlMessageFromSender(u.getFirstName() + " " + u.getLastName(), message))
                                                 .put("userlist", userUsernameMap.values())
@@ -166,6 +170,16 @@ public class Chat {
             }
         }
     }
+
+    private static Trip findTripByStartingPlaceAndDestination(String startingPlace, String destination) {
+        for (Trip t : trips) {
+            if (t.getStartingPlace().equals(startingPlace) && t.getDestination().equals(destination)) {
+                return t;
+            }
+        }
+        return  null;
+    }
+
 
     public static void checkSubscriptionForTripAndSendMessage(JSONObject obj) throws JSONException {
         for (Trip s : subscribedTrips) {
