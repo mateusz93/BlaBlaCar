@@ -14,6 +14,10 @@ function updateChatAndLists(msg) {
     data.userlist.forEach(function (user) {
         insert("userlist", "<li>" + user + "</li>");
     });
+    id("me").innerHTML = "";
+    data.me.forEach(function (user) {
+        insert("me", "<li>" + user + "</li>");
+    });
     id("tripList").innerHTML = "";
     var number = 0;
     data.tripList.forEach(function (trip) {

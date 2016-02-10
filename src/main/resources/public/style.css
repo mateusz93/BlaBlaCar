@@ -28,6 +28,17 @@ li {
     margin: 5px 0;
 }
 
+#me {
+    position: fixed;
+    left: 50%;
+    list-style: none;
+    margin-left: 250px;
+    background: #f0f0f9;
+    padding: 5px 10px;
+    width: 150px;
+    top: 30px;
+}
+
 #userlist {
     position: fixed;
     left: 50%;
@@ -36,7 +47,7 @@ li {
     background: #f0f0f9;
     padding: 5px 10px;
     width: 150px;
-    top: 11px;
+    top: 110px;
 }
 
 #addTrip {

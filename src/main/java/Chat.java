@@ -71,12 +71,16 @@ public class Chat {
     //Sends a message from one user to all users, along with a list of current usernames
     public static void broadcastMessage(String sender, String message) {
         userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            ArrayList<User> me = new ArrayList<User>();
+            me.add(userUsernameMap.get(session));
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                                 .put("userMessage", createHtmlMessageFromSender(sender, message))
                                 .put("userlist", userUsernameMap.values())
                                 .put("tripList", trips)
+                                .put("me", me)
                 ));
+                System.out.print(me.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -143,6 +147,7 @@ public class Chat {
                                                 .put("userMessage", createHtmlMessageFromSender(u.getFirstName() + " " + u.getLastName(), message))
                                                 .put("userlist", userUsernameMap.values())
                                                 .put("tripList", trips)
+                                                .put("me", userUsernameMap.get(session))
                                 ));
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -180,6 +185,7 @@ public class Chat {
                                     .put("userMessage", createHtmlMessageFromSender(trips.get(trips.size() - 1).getOwner().toString(), message))
                                     .put("userlist", userUsernameMap.values())
                                     .put("tripList", trips)
+                                    .put("me", userUsernameMap.get(session))
                     ));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -194,6 +200,7 @@ public class Chat {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                                 .put("userlist", userUsernameMap.values())
                                 .put("tripList", trips)
+                                .put("me", userUsernameMap.get(session))
                 ));
             } catch (IOException e) {
                 e.printStackTrace();
