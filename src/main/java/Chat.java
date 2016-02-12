@@ -164,6 +164,7 @@ public class Chat {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            break;
                         }
                     }
                 });
