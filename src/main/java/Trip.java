@@ -17,7 +17,6 @@ public class Trip {
     private String destination;
     private double price;
     private int freeSeats;
-    private Session user;
     private List<User> users;
 
     public Trip() {
@@ -70,14 +69,6 @@ public class Trip {
 
     public void setFreeSeats(int freeSeats) {
         this.freeSeats = freeSeats;
-    }
-
-    public Session getUser() {
-        return user;
-    }
-
-    public void setUser(Session user) {
-        this.user = user;
     }
 
     public List<User> getUsers() {

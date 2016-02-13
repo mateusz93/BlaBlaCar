@@ -12,32 +12,30 @@ import java.util.stream.Stream;
 import static j2html.TagCreator.*;
 import static spark.Spark.*;
 
-public class Chat {
+public class BlaBlaCar {
     static List<Trip> subscribedTrips = new ArrayList<Trip>();
     static List<Trip> trips = new ArrayList<Trip>();
     static List<User> users = new ArrayList<User>();
-    //static Map<Session, String> userUsernameMap = new HashMap<>();
-    static Map<Session, User> userUsernameMap = new HashMap<>();
+    static Map<Session, User> userNamesMap = new HashMap<>();
     static int nextUserNumber = 0; //Assign to username for next connecting user
 
     public static void main(String[] args) {
         staticFileLocation("public"); //index.html is served at localhost:4567 (default port)
-        webSocket("/chat", ChatWebSocketHandler.class);
+        webSocket("/blablacar", BlaBlaCarWebSocketHandler.class);
         init();
         initUsers();
         initTrips();
     }
 
     private static void initTrips() {
-        Trip trip = new Trip();
-        trip.setStartingDay(new Date());
-        trip.setPrice(15);
-        trip.setStartingPlace("Wrocław");
-        trip.setDestination("Gdańsk");
-        trip.setOwner(users.get(0));
-        trip.setFreeSeats(4);
-        trips.add(trip);
-
+//        Trip trip = new Trip();
+//        trip.setStartingDay(new Date());
+//        trip.setPrice(15);
+//        trip.setStartingPlace("Wrocław");
+//        trip.setDestination("Gdańsk");
+//        trip.setOwner(users.get(0));
+//        trip.setFreeSeats(4);
+//        trips.add(trip);
 //        Trip trip2 = new Trip();
 //        trip2.setStartingDay(new Date());
 //        trip2.setPrice(111);
@@ -70,17 +68,14 @@ public class Chat {
 
     //Sends a message from one user to all users, along with a list of current usernames
     public static void broadcastMessage(String sender, String message) {
-        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-            ArrayList<User> me = new ArrayList<User>();
-            me.add(userUsernameMap.get(session));
+        userNamesMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                                 .put("userMessage", createHtmlMessageFromSender(sender, message))
-                                .put("userlist", userUsernameMap.values())
+                                .put("userlist", userNamesMap.values())
                                 .put("tripList", trips)
-                                .put("me", me)
+                                .put("myName", userNamesMap.get(session))
                 ));
-                System.out.print(me.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -96,16 +91,17 @@ public class Chat {
         ).render();
     }
 
-    public static void addTrip(JSONObject json, User user) throws JSONException {
+    public static void addTrip(JSONObject json, User user) throws JSONException, ParseException {
         Trip trip = new Trip();
         trip.setOwner(user);
         trip.setStartingPlace(json.getString("startingPlace"));
         trip.setDestination(json.getString("destination"));
         trip.setFreeSeats(json.getInt("freeSeats"));
         trip.setPrice(json.getDouble("price"));
-        // trip.setStartingDay(json.getString("startingDay"));
+        trip.setStartingDay((new SimpleDateFormat("dd-mm-yyyy")).parse(json.getString("startingDay")));
         trip.getUsers().add(user);
         trips.add(trip);
+        checkSubscriptionForTripAndSendMessage(json);
     }
 
     public static void subscribeTrip(JSONObject json, User user) throws JSONException {
@@ -116,9 +112,8 @@ public class Chat {
         subscribedTrips.add(trip);
     }
 
-    public static void saveMeForATrip(JSONObject json, User user) throws JSONException {
+    public static void saveMeForTheTrip(JSONObject json, User user) throws JSONException {
         int tripNumber = Integer.parseInt(json.getString("tripNumber"));
-        System.out.println("Numer przejazdu: " + tripNumber);
         if (trips.get(tripNumber).getFreeSeats() > 0) {
             for (User u : trips.get(tripNumber).getUsers()) {
                 if (u.getEmail().equals(user.getEmail())) {
@@ -132,64 +127,51 @@ public class Chat {
         }
     }
 
-    private static void sendNotificationToAllTripParticipants(String startingPlace, String destination, User u) {
-        for (Trip s : trips) {
-            if (s.getStartingPlace().equals(startingPlace) &&
-                    s.getDestination().equals(destination)) {
-                final List<User> finalUsersToNotificate = s.getUsers();
-                System.out.println(finalUsersToNotificate.toString());
-                userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-                    ArrayList<User> me = new ArrayList<User>();
-                    me.add(userUsernameMap.get(session));
-                    for (User user : finalUsersToNotificate) {
-                        if (session == user.getUserSession() || session == s.getOwner().getUserSession()) {
-                            try {
-                                String message = "";
-                                if (session == u.getUserSession()) {
-                                    message = "Zapisałem się na przejazd";
-                                } else {
-                                    message = "Dołączył do przejazdu w którym bierzesz udział";
-                                }
-                                message += " [Miejsce startu: " + startingPlace + "]\n";
-                                message += "[Miejsce docelowe: " + destination + "]\n";
-                                message += "[Lista uczestników: ";
-                                for (User us : findTripByStartingPlaceAndDestination(startingPlace, destination).getUsers()) {
-                                    message += us.getFirstName() + " " + us.getLastName() + ", ";
-                                }
-                                message += "]";
-                                session.getRemote().sendString(String.valueOf(new JSONObject()
-                                                .put("userMessage", createHtmlMessageFromSender(u.getFirstName() + " " + u.getLastName(), message))
-                                                .put("userlist", userUsernameMap.values())
-                                                .put("tripList", trips)
-                                                .put("me", me)
-                                ));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            break;
-                        }
-                    }
+    private static void sendNotificationToAllTripParticipants(String startingPlace, String destination, User user) {
+        for (Trip trip : trips) {
+            if (trip.getStartingPlace().equals(startingPlace) && trip.getDestination().equals(destination)) {
+                userNamesMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+                    sendNotificationToParticipants(session, trip, user);
                 });
             }
         }
     }
 
-    private static Trip findTripByStartingPlaceAndDestination(String startingPlace, String destination) {
-        for (Trip t : trips) {
-            if (t.getStartingPlace().equals(startingPlace) && t.getDestination().equals(destination)) {
-                return t;
+    private static void sendNotificationToParticipants(Session session, Trip trip, User user) {
+        for (User users : trip.getUsers()) {
+            if (session == users.getUserSession() || session == trip.getOwner().getUserSession()) {
+                try {
+                    String message = prepareSubscriptionMessage(session, trip.getStartingPlace(), trip.getDestination(), user);
+                    session.getRemote().sendString(String.valueOf(new JSONObject()
+                                    .put("userMessage", createHtmlMessageFromSender(user.getFirstName() + " " + user.getLastName(), message))
+                                    .put("userlist", userNamesMap.values())
+                                    .put("tripList", trips)
+                                    .put("myName", userNamesMap.get(session))
+                    ));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
             }
         }
-        return  null;
+    }
+
+    private static Trip findTripByStartingPlaceAndDestination(String startingPlace, String destination) {
+        for (Trip trip : trips) {
+            if (trip.getStartingPlace().equals(startingPlace) && trip.getDestination().equals(destination)) {
+                return trip;
+            }
+        }
+        return null;
     }
 
 
     public static void checkSubscriptionForTripAndSendMessage(JSONObject obj) throws JSONException {
-        for (Trip s : subscribedTrips) {
-            if (s.getStartingPlace().equals(obj.getString("startingPlace")) &&
-                    s.getDestination().equals(obj.getString("destination"))) {
+        for (Trip trip : subscribedTrips) {
+            if (trip.getStartingPlace().equals(obj.getString("startingPlace")) &&
+                    trip.getDestination().equals(obj.getString("destination"))) {
 
-                Session user = s.getOwner().getUserSession();
+                Session user = trip.getOwner().getUserSession();
                 sendSubscriptionMessageToSubscribers(user, obj);
             }
         }
@@ -197,22 +179,15 @@ public class Chat {
     }
 
     private static void sendSubscriptionMessageToSubscribers(final Session subscriber, JSONObject obj) {
-        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-            ArrayList<User> me = new ArrayList<User>();
-            me.add(userUsernameMap.get(session));
+        userNamesMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             if (session == subscriber) {
                 try {
-                    String message = ">>> Dodał przejazd który subskrybujesz <<< ";
-                    message += "[Miejsce startu: " + obj.getString("startingPlace") + "]\n";
-                    message += "[Miejsce docelowe: " + obj.getString("destination") + "]\n";
-                    message += "[Wolne miejsca: " + obj.getString("freeSeats") + "]\n";
-                    message += "[Cena: " + obj.getString("price") + "]\n";
-
+                    String message = prepareSubscriptionMessageForSubscriber(obj);
                     session.getRemote().sendString(String.valueOf(new JSONObject()
                                     .put("userMessage", createHtmlMessageFromSender(trips.get(trips.size() - 1).getOwner().toString(), message))
-                                    .put("userlist", userUsernameMap.values())
+                                    .put("userlist", userNamesMap.values())
                                     .put("tripList", trips)
-                                    .put("me", me)
+                                    .put("myName", userNamesMap.get(session))
                     ));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -221,15 +196,17 @@ public class Chat {
         });
     }
 
+    public static void cancelTrip(JSONObject obj, User user) {
+
+    }
+
     private static void updateAllLists() {
-        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-            ArrayList<User> me = new ArrayList<User>();
-            me.add(userUsernameMap.get(session));
+        userNamesMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
-                                .put("userlist", userUsernameMap.values())
+                                .put("userlist", userNamesMap.values())
                                 .put("tripList", trips)
-                                .put("me", me)
+                                .put("myName", userNamesMap.get(session))
                 ));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -239,5 +216,25 @@ public class Chat {
         });
     }
 
+    private static String prepareSubscriptionMessage(Session session, String startingPlace, String destination, User user) {
+        String message = (session == user.getUserSession()) ? "Zapisałem się na przejazd" :
+                "Dołączył do przejazdu w którym bierzesz udział";
+        message += " [Miejsce startu: " + startingPlace + "]\n";
+        message += "[Miejsce docelowe: " + destination + "]\n";
+        message += "[Lista uczestników: ";
+        for (User u : findTripByStartingPlaceAndDestination(startingPlace, destination).getUsers()) {
+            message += u.getFirstName() + " " + u.getLastName() + ", ";
+        }
+        message += "]";
+        return message;
+    }
 
+    private static String prepareSubscriptionMessageForSubscriber(JSONObject obj) throws JSONException {
+        String message = ">>> Dodał przejazd który subskrybujesz <<< ";
+        message += "[Miejsce startu: " + obj.getString("startingPlace") + "]\n";
+        message += "[Miejsce docelowe: " + obj.getString("destination") + "]\n";
+        message += "[Wolne miejsca: " + obj.getString("freeSeats") + "]\n";
+        message += "[Cena: " + obj.getString("price") + "]\n";
+        return message;
+    }
 }

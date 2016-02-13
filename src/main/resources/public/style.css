@@ -28,15 +28,35 @@ li {
     margin: 5px 0;
 }
 
-#me {
+#myNameDiv {
+    position: fixed;
+    left: 50%;
+    list-style: none;
+    margin-left: 240px;
+    padding: 5px 10px;
+    width: 200px;
+    top: 5px;
+}
+
+#myName {
     position: fixed;
     left: 50%;
     list-style: none;
     margin-left: 250px;
     background: #f0f0f9;
     padding: 5px 10px;
-    width: 150px;
+    width: 200px;
     top: 30px;
+}
+
+#userListDiv {
+    position: fixed;
+    left: 50%;
+    list-style: none;
+    margin-left: 240px;
+    padding: 5px 10px;
+    width: 300px;
+    top: 85px;
 }
 
 #userlist {
@@ -46,7 +66,7 @@ li {
     margin-left: 250px;
     background: #f0f0f9;
     padding: 5px 10px;
-    width: 150px;
+    width: 200px;
     top: 110px;
 }
 
@@ -55,11 +75,10 @@ li {
     right: 50%;
     list-style: none;
     margin-right: 250px;
-    margin-top: 130px;
     background: #f0f0f9;
     padding: 5px 10px;
     width: 200px;
-    top: 11px;
+    top: 15px;
 }
 
 #subscribeTrip {
@@ -70,6 +89,17 @@ li {
     background: #f0f0f9;
     padding: 5px 10px;
     width: 200px;
+    top: 15px;
+}
+
+#tripListDiv {
+    position: fixed;
+    right: 50%;
+    list-style: none;
+    margin-right: 250px;
+    margin-top: 290px;
+    padding: 5px 10px;
+    width: 300px;
     top: 11px;
 }
 
@@ -78,7 +108,30 @@ li {
     right: 50%;
     list-style: none;
     margin-right: 250px;
-    margin-top: 370px;
+    margin-top: 330px;
+    background: #f0f0f9;
+    padding: 5px 10px;
+    width: 300px;
+    top: 11px;
+}
+
+#myTripListDiv {
+    position: fixed;
+    right: 50%;
+    list-style: none;
+    margin-right: 250px;
+    margin-top: 290px;
+    padding: 5px 10px;
+    width: 300px;
+    top: 11px;
+}
+
+#myTripList {
+    position: fixed;
+    right: 50%;
+    list-style: none;
+    margin-right: 250px;
+    margin-top: 330px;
     background: #f0f0f9;
     padding: 5px 10px;
     width: 300px;

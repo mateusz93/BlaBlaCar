@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WebsSockets</title>
+    <title>BlaBlaCar</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <div style="width: 100%;">
@@ -11,33 +12,54 @@
     <div style="float:right;">
     </div>
 </div>
-<body>
 <img src="http://i76.fastpic.ru/big/2015/1220/20/754de54bf7195207e018717a695eff20.png" alt="BlaBlaCar">
 </br>
+<button type="button" onclick="showCancelTripForm()">Anuluj przejazd</button>
 <button type="button" onclick="showAddTripForm()">Dodaj przejazd</button>
-<button type="button" onclick="showSubscribeTripForm()">Subskrybuj przejazd</button>
 <br><br>
 <button type="button" onclick="showSaveTripFormAndActivateSaving()">Zapisz sie na przejazd</button>
+<button type="button" onclick="showSubscribeTripForm()">Subskrybuj przejazd</button>
 
 <div id="addTrip" style="visibility: hidden">
+    <p>Dodaj przejazd</p>
     <input id="startingPlace" name="startPlace" type="text" placeholder="Skad">
     <input id="destination" name="destination" type="text" placeholder="Dokad"><br>
-    <input id="startingDay" name="startingDay" type="text" placeholder="DD:MM:YYYY"><br>
+    <input id="startingDay" name="startingDay" type="text" placeholder="DD-MM-YYYY"><br>
     <input id="price" name="price" type="text" placeholder="Cena"><br>
     <input id="freeSeats" name="freeSpace" type="text" placeholder="Wolne miejsca"><br>
     <button id="addTripSend">Zapisz</button>
 </div>
 
 <div id="subscribeTrip" style="visibility: hidden">
+    <p>Subskrybuj przejazd</p>
     <input id="subscribeStartingPlace" name="subscribeStartPlace" type="text" placeholder="Skad">
     <input id="subscribeDestination" name="subscribeDestination" type="text" placeholder="Dokad"><br>
     <button id="subscribeTripSend">Zapisz</button>
 </div>
 <br><br>
-<ul id="tripList" style="visibility: hidden"></ul>
-<ul id="me"></ul>
-<ul id="userlist"></ul>
+
+<div id="tripListDiv" style="visibility: hidden">
+    <p>Lista przejazdów:</p>
+    <ul id="tripList"></ul>
+</div>
+
+<div id="myTripListDiv" style="visibility: hidden">
+    <p>Moje przejazdy:</p>
+    <ul id="myTripList"></ul>
+</div>
+
+<div id="myNameDiv">
+    <p>Zalogowany jako:</p>
+    <ul id="myName"></ul>
+</div>
+
+<div id="userListDiv">
+    <p>Lista zalogowanych użytkowników:</p>
+    <ul id="userlist"></ul>
+</div>
+
 <div id="chat"></div>
+
 <script src="websocketDemo.js"></script>
 
 </body>
