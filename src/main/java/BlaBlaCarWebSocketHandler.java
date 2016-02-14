@@ -15,7 +15,7 @@ public class BlaBlaCarWebSocketHandler {
         User user1 = BlaBlaCar.users.get(BlaBlaCar.nextUserNumber);
         BlaBlaCar.users.get(BlaBlaCar.nextUserNumber).setUserSession(user);
         BlaBlaCar.userNamesMap.put(user, BlaBlaCar.users.get(BlaBlaCar.nextUserNumber));
-        BlaBlaCar.connectedMessage(user1.getFirstName() + " " + user1.getLastName(), "podłączył się", user);
+        BlaBlaCar.broadcastMessage(sender = user1.getFirstName() + " " + user1.getLastName(), msg = "podłączył się", user);
         ++BlaBlaCar.nextUserNumber;
     }
 
@@ -23,7 +23,7 @@ public class BlaBlaCarWebSocketHandler {
     public void onClose(Session user, int statusCode, String reason) {
         User user1 = BlaBlaCar.userNamesMap.get(user);
         BlaBlaCar.userNamesMap.remove(user);
-        BlaBlaCar.broadcastMessage(sender = user1.getFirstName() + " " + user1.getLastName(), msg = "rozłączył się");
+        BlaBlaCar.broadcastMessage(sender = user1.getFirstName() + " " + user1.getLastName(), msg = "rozłączył się", user);
     }
 
     @OnWebSocketMessage

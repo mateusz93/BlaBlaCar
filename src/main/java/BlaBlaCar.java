@@ -67,23 +67,7 @@ public class BlaBlaCar {
     }
 
     //Sends a message from one user to all users, along with a list of current usernames
-    public static void broadcastMessage(String sender, String message) {
-        userNamesMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-            try {
-                session.getRemote().sendString(String.valueOf(new JSONObject()
-                                .put("userMessage", createHtmlMessageFromSender(sender, message))
-                                .put("userlist", userNamesMap.values())
-                                .put("tripList", trips)
-                                .put("myTripList", findMyTripsByUser(userNamesMap.get(session)))
-                                .put("myName", userNamesMap.get(session))
-                ));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public static void connectedMessage(String sender, String message, Session user) {
+    public static void broadcastMessage(String sender, String message, Session user) {
         userNamesMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 if (session == user) {
