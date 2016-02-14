@@ -83,6 +83,31 @@ public class BlaBlaCar {
         });
     }
 
+    public static void connectedMessage(String sender, String message, Session user) {
+        userNamesMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                if (session == user) {
+                    session.getRemote().sendString(String.valueOf(new JSONObject()
+                                    .put("userlist", userNamesMap.values())
+                                    .put("tripList", trips)
+                                    .put("myTripList", findMyTripsByUser(userNamesMap.get(session)))
+                                    .put("myName", userNamesMap.get(session))
+                    ));
+                } else {
+                    session.getRemote().sendString(String.valueOf(new JSONObject()
+                                    .put("userMessage", createHtmlMessageFromSender(sender, message))
+                                    .put("userlist", userNamesMap.values())
+                                    .put("tripList", trips)
+                                    .put("myTripList", findMyTripsByUser(userNamesMap.get(session)))
+                                    .put("myName", userNamesMap.get(session))
+                    ));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     //Builds a HTML element with a sender-name, a message, and a timestamp,
     private static String createHtmlMessageFromSender(String sender, String message) {
         return article().with(
@@ -293,6 +318,5 @@ public class BlaBlaCar {
         message += "]";
         return message;
     }
-
 
 }

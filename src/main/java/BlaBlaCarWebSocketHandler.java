@@ -15,7 +15,7 @@ public class BlaBlaCarWebSocketHandler {
         User user1 = BlaBlaCar.users.get(BlaBlaCar.nextUserNumber);
         BlaBlaCar.users.get(BlaBlaCar.nextUserNumber).setUserSession(user);
         BlaBlaCar.userNamesMap.put(user, BlaBlaCar.users.get(BlaBlaCar.nextUserNumber));
-        BlaBlaCar.broadcastMessage(sender = user1.getFirstName() + " " + user1.getLastName(), msg = "podłączył się");
+        BlaBlaCar.connectedMessage(user1.getFirstName() + " " + user1.getLastName(), "podłączył się", user);
         ++BlaBlaCar.nextUserNumber;
     }
 
