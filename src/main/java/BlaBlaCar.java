@@ -74,6 +74,7 @@ public class BlaBlaCar {
                                 .put("userMessage", createHtmlMessageFromSender(sender, message))
                                 .put("userlist", userNamesMap.values())
                                 .put("tripList", trips)
+                                .put("myTripList", findMyTripsByUser(userNamesMap.get(session)))
                                 .put("myName", userNamesMap.get(session))
                 ));
             } catch (Exception e) {
@@ -127,6 +128,37 @@ public class BlaBlaCar {
         }
     }
 
+    public static void cancelTrip(JSONObject json, User user) throws JSONException {
+        int tripNumber = Integer.parseInt(json.getString("tripNumber"));
+
+        sendCancelTripMessageToParticipants(trips.get(tripNumber));
+        trips.remove(trips.get(tripNumber));
+
+        updateAllLists();
+    }
+
+    private static void sendCancelTripMessageToParticipants(Trip trip) {
+        userNamesMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            for (User user : trip.getUsers()) {
+                if (session == user.getUserSession() || session == trip.getOwner().getUserSession()) {
+                    try {
+                        String message = prepareCancelTripMessageForParticipant(session, trip, user);
+                        user.getUserSession().getRemote().sendString(String.valueOf(new JSONObject()
+                                        .put("userMessage", createHtmlMessageFromSender(trip.getOwner().getFirstName() + " " + trip.getOwner().getLastName(), message))
+                                        .put("userlist", userNamesMap.values())
+                                        .put("tripList", trips)
+                                        .put("myTripList", findMyTripsByUser(userNamesMap.get(user.getUserSession())))
+                                        .put("myName", userNamesMap.get(user.getUserSession()))
+                        ));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        });
+    }
+
     private static void sendNotificationToAllTripParticipants(String startingPlace, String destination, User user) {
         for (Trip trip : trips) {
             if (trip.getStartingPlace().equals(startingPlace) && trip.getDestination().equals(destination)) {
@@ -146,6 +178,7 @@ public class BlaBlaCar {
                                     .put("userMessage", createHtmlMessageFromSender(user.getFirstName() + " " + user.getLastName(), message))
                                     .put("userlist", userNamesMap.values())
                                     .put("tripList", trips)
+                                    .put("myTripList", findMyTripsByUser(userNamesMap.get(session)))
                                     .put("myName", userNamesMap.get(session))
                     ));
                 } catch (Exception e) {
@@ -187,6 +220,7 @@ public class BlaBlaCar {
                                     .put("userMessage", createHtmlMessageFromSender(trips.get(trips.size() - 1).getOwner().toString(), message))
                                     .put("userlist", userNamesMap.values())
                                     .put("tripList", trips)
+                                    .put("myTripList", findMyTripsByUser(userNamesMap.get(session)))
                                     .put("myName", userNamesMap.get(session))
                     ));
                 } catch (Exception e) {
@@ -196,8 +230,14 @@ public class BlaBlaCar {
         });
     }
 
-    public static void cancelTrip(JSONObject obj, User user) {
-
+    private static List<Trip> findMyTripsByUser(User user) {
+        ArrayList<Trip> myTrips = new ArrayList<>();
+        for (Trip t : trips) {
+            if (t.getOwner().getEmail().equals(user.getEmail())) {
+                myTrips.add(t);
+            }
+        }
+        return myTrips;
     }
 
     private static void updateAllLists() {
@@ -206,6 +246,7 @@ public class BlaBlaCar {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                                 .put("userlist", userNamesMap.values())
                                 .put("tripList", trips)
+                                .put("myTripList", findMyTripsByUser(userNamesMap.get(session)))
                                 .put("myName", userNamesMap.get(session))
                 ));
             } catch (IOException e) {
@@ -217,8 +258,8 @@ public class BlaBlaCar {
     }
 
     private static String prepareSubscriptionMessage(Session session, String startingPlace, String destination, User user) {
-        String message = (session == user.getUserSession()) ? "Zapisałem się na przejazd" :
-                "Dołączył do przejazdu w którym bierzesz udział";
+        String message = (session == user.getUserSession()) ? ">>>>>>>> Zapisałem się na przejazd <<<<<<<<" :
+                ">Dołączył do przejazdu w którym bierzesz udział<";
         message += " [Miejsce startu: " + startingPlace + "]\n";
         message += "[Miejsce docelowe: " + destination + "]\n";
         message += "[Lista uczestników: ";
@@ -230,11 +271,28 @@ public class BlaBlaCar {
     }
 
     private static String prepareSubscriptionMessageForSubscriber(JSONObject obj) throws JSONException {
-        String message = ">>> Dodał przejazd który subskrybujesz <<< ";
-        message += "[Miejsce startu: " + obj.getString("startingPlace") + "]\n";
+        String message = ">>>>>> Dodał przejazd który subskrybujesz <<<<<<";
+        message += " [Miejsce startu: " + obj.getString("startingPlace") + "]\n";
         message += "[Miejsce docelowe: " + obj.getString("destination") + "]\n";
         message += "[Wolne miejsca: " + obj.getString("freeSeats") + "]\n";
         message += "[Cena: " + obj.getString("price") + "]\n";
         return message;
     }
+
+    private static String prepareCancelTripMessageForParticipant(Session session, Trip trip, User user) {
+        String message = (session == trip.getOwner().getUserSession()) ? ">>>>>>>>>>>>> Anulowałeś przejazd <<<<<<<<<<<<" :
+                ">>> Anulował przejazd w którym brałeś udział <<<";
+        message += " [Miejsce startu: " + trip.getStartingPlace() + "]\n";
+        message += "[Miejsce docelowe: " + trip.getDestination() + "]\n";
+        message += "[Wolne miejsca: " + trip.getFreeSeats() + "]\n";
+        message += "[Cena: " + trip.getPrice() + "]\n";
+        message += "[Lista uczestników: ";
+        for (User u : trip.getUsers()) {
+            message += u.getFirstName() + " " + u.getLastName() + ", ";
+        }
+        message += "]";
+        return message;
+    }
+
+
 }

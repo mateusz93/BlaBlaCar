@@ -43,7 +43,7 @@ public class BlaBlaCarWebSocketHandler {
             case "saveForTrip":
                 BlaBlaCar.saveMeForTheTrip(obj, user1);
                 break;
-            case "cancelTrip":
+            case "cancelMyTrip":
                 BlaBlaCar.cancelTrip(obj, user1);
                 break;
         }

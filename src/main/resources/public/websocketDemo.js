@@ -6,7 +6,7 @@ webSocket.onclose = function () { alert("WebSocket connection closed") };
 
 //Update the chat-panel and all lists
 function updateChatAndLists(msg) {
-    var number = 0;
+    var numberOfTrip = 0, numberOfMyTrip = 0;
     var data = JSON.parse(msg.data);
 
     id("myName").innerHTML = "";
@@ -24,7 +24,14 @@ function updateChatAndLists(msg) {
     id("tripList").innerHTML = "";
     data.tripList.forEach(function (trip) {
         insert("tripList", "<li>" + trip +
-            "<br><button name=\"trip\" value=\"" + number++ + "\" >Zapisz sie</button>" +
+            "<br><button name=\"trip\" value=\"" + numberOfTrip++ + "\" >Zapisz sie</button>" +
+            "</li><br><br>");
+    })
+
+    id("myTripList").innerHTML = "";
+    data.myTripList.forEach(function (trip) {
+        insert("myTripList", "<li>" + trip +
+            "<br><button name=\"myTrip\" value=\"" + numberOfMyTrip++ + "\" >Anuluj przejazd</button>" +
             "</li><br><br>");
     })
 
