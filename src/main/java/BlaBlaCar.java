@@ -122,7 +122,7 @@ public class BlaBlaCar {
         subscribedTrips.add(trip);
     }
 
-    public static void saveMeForTheTrip(JSONObject json, User user) throws JSONException {
+    public static synchronized void saveMeForTheTrip(JSONObject json, User user) throws JSONException {
         int tripNumber = Integer.parseInt(json.getString("tripNumber"));
         if (trips.get(tripNumber).getFreeSeats() > 0) {
             for (User u : trips.get(tripNumber).getUsers()) {
@@ -137,7 +137,7 @@ public class BlaBlaCar {
         }
     }
 
-    public static void cancelTrip(JSONObject json, User user) throws JSONException {
+    public static synchronized void cancelTrip(JSONObject json, User user) throws JSONException {
         int tripNumber = Integer.parseInt(json.getString("tripNumber"));
         sendCancelTripMessageToTripParticipants(trips.get(tripNumber));
         trips.remove(trips.get(tripNumber));
