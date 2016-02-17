@@ -17,7 +17,6 @@ public class BlaBlaCar {
     static List<Trip> trips = new ArrayList<Trip>();
     static List<User> users = new ArrayList<User>();
     static Map<Session, User> userNamesMap = new HashMap<>();
-    static int nextUserNumber = 0; //Assign to username for next connecting user
 
     public static void main(String[] args) {
         staticFileLocation("public"); //index.html is served at localhost:4567 (default port)
@@ -262,6 +261,24 @@ public class BlaBlaCar {
                 e.printStackTrace();
             }
         });
+    }
+
+    public static int getIndexOfFirstAvailableUser() {
+        for (int i = 0; i < users.size(); ++i) {
+            if (users.get(i).getUserSession() == null) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static void removeUserBySession(Session userSession) {
+        for (User user : users) {
+            if (user.getUserSession() == userSession) {
+                user.setUserSession(null);
+                return;
+            }
+        }
     }
 
     private static String prepareSubscriptionMessage(Session session, String startingPlace, String destination, User user) {
