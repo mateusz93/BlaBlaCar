@@ -7,4 +7,4 @@ Marek;Zdun;marek.zdun@gmail.com;password
 Marian;Pazdzioch;mar.pazdz@gmail.com;password
 Irena;Zadka;i.zadka@gmail.com;password
 Zuzanna;Duleba;z.duleba@gmail.com;password
-Emilia;Olszewska;emilia.o@gmail.com;password
+Emilia;Olszewska;emilia.o@gmail.com;passwordJanusz;Tracz;tracz@gmail.com;password
